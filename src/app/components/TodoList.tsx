@@ -18,8 +18,8 @@ const TodoListContent = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filter todos by section
-  const pendingTodos = (selectedDate ? filteredTodos : todos).filter((todo) => todo.section === "pending" || !todo.completed);
-  const completedTodos = (selectedDate ? filteredTodos : todos).filter((todo) => todo.section === "completed" || todo.completed);
+  const pendingTodos = (selectedDate ? filteredTodos : todos).filter((todo) => !todo.completed);
+  const completedTodos = (selectedDate ? filteredTodos : todos).filter((todo) => todo.completed);
 
   const handleDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId } = result;

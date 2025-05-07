@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
 const prisma = new PrismaClient();
 
@@ -92,7 +92,13 @@ export async function PATCH(request: Request, { params }: Params) {
     }
 
     const body = await request.json();
-    const { title, description, completed, position } = body;
+    const { title, description, completed, position, section } = body;
+
+    // Ensure section is consistent with completed status
+    let sectionValue = section;
+    if (completed !== undefined) {
+      sectionValue = completed ? "completed" : "pending";
+    }
 
     const updatedTodo = await prisma.todo.update({
       where: {
@@ -103,6 +109,7 @@ export async function PATCH(request: Request, { params }: Params) {
         ...(description !== undefined && { description }),
         ...(completed !== undefined && { completed }),
         ...(position !== undefined && { position }),
+        ...(sectionValue !== undefined && { section: sectionValue }),
       },
     });
 
