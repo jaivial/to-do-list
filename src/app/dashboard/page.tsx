@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { TodoProvider } from "../context/TodoContext";
 import TodoList from "../components/TodoList";
-import SimpleLanguageSwitcher from "../components/SimpleLanguageSwitcher";
+import Navbar from "../components/ui/Navbar";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -30,15 +30,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">{t("Dashboard.title")}</h1>
-          <SimpleLanguageSwitcher />
+    <div className="min-h-screen bg-gray-50">
+      <Navbar title={t("Dashboard.title")} />
+      <div className="py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <TodoProvider>
+            <TodoList />
+          </TodoProvider>
         </div>
-        <TodoProvider>
-          <TodoList />
-        </TodoProvider>
       </div>
     </div>
   );

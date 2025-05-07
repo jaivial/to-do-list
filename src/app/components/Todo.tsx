@@ -5,12 +5,7 @@ import { Todo } from "../lib/types";
 import { useTodoContext } from "../context/TodoContext";
 import { FiTrash2, FiEdit, FiCheck, FiX } from "react-icons/fi";
 import { Draggable } from "@hello-pangea/dnd";
-
-// Dictionary of fallback translations
-const TRANSLATIONS: Record<string, string> = {
-  cancel: "Cancel",
-  save: "Save",
-};
+import { useLanguage } from "../context/LanguageContext";
 
 interface TodoItemProps {
   todo: Todo;
@@ -20,14 +15,10 @@ interface TodoItemProps {
 // Create a wrapper component that safely uses translations
 const TodoItemContent: React.FC<TodoItemProps> = ({ todo, index }) => {
   const { dispatch } = useTodoContext();
+  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description || "");
-
-  // Simple translation function that provides stable fallbacks
-  const t = (key: string): string => {
-    return TRANSLATIONS[key] || key;
-  };
 
   const handleComplete = async () => {
     try {
@@ -121,16 +112,16 @@ const TodoItemContent: React.FC<TodoItemProps> = ({ todo, index }) => {
         >
           {isEditing ? (
             <div className="space-y-3">
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Task title" />
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Task description (optional)" rows={2} />
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder={t("TodoList.taskTitle")} />
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder={t("TodoList.taskDescription")} rows={2} />
               <div className="flex justify-end space-x-2">
                 <button onClick={handleCancel} className="flex items-center px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
                   <FiX className="mr-1" />
-                  {t("cancel")}
+                  {t("Todo.cancel")}
                 </button>
                 <button onClick={handleSave} className="flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
                   <FiCheck className="mr-1" />
-                  {t("save")}
+                  {t("Todo.save")}
                 </button>
               </div>
             </div>

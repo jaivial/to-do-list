@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { TodoProvider } from "../../context/TodoContext";
 import TodoList from "../../components/TodoList";
-import LanguageSwitcher from "../../components/LanguageSwitcher";
 import { useTranslations, useMessages, NextIntlClientProvider } from "next-intl";
 import { useParams } from "next/navigation";
+import Navbar from "../../components/ui/Navbar";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -34,17 +34,16 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">{t("title")}</h1>
-          <LanguageSwitcher />
+    <div className="min-h-screen bg-gray-50">
+      <Navbar title={t("title")} />
+      <div className="py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <TodoProvider>
+              <TodoList />
+            </TodoProvider>
+          </NextIntlClientProvider>
         </div>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <TodoProvider>
-            <TodoList />
-          </TodoProvider>
-        </NextIntlClientProvider>
       </div>
     </div>
   );
