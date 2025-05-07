@@ -2,26 +2,22 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const locale = typeof window !== "undefined" ? window.location.pathname.split("/")[1] || "en" : "en";
+  const locale = typeof window !== "undefined" ? window.location.pathname.split("/")[1] : "en";
 
   useEffect(() => {
     if (!loading) {
       if (user) {
-        if (locale && ["en", "es"].includes(locale)) {
-          router.push(`/${locale}/dashboard`);
-        } else {
-          router.push(`/en/dashboard`);
-        }
+        router.push(`/${locale}/dashboard`);
       } else {
-        router.push(`/${locale}/auth/login`);
+        router.push("/auth/login");
       }
     }
-  }, [user, loading, router, locale]);
+  }, [user, loading, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

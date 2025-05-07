@@ -45,7 +45,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(result.error);
       }
 
-      router.push("/dashboard");
+      const locale = typeof window !== "undefined" ? window.location.pathname.split("/")[1] : "en";
+      router.push(`/${locale}/dashboard`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

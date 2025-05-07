@@ -1,0 +1,56 @@
+{
+    "TodoList": {
+        "addNewTask": "Añadir Nueva Tarea",
+        "taskTitle": "Título de la tarea",
+        "taskDescription": "Descripción de la tarea (opcional)",
+        "cancel": "Cancelar",
+        "addTask": "Añadir Tarea",
+        "adding": "Añadiendo...",
+        "noTasks": "No hay tareas aún. ¡Añade una para comenzar!"
+    },
+    "Todo": {
+        "cancel": "Cancelar",
+        "save": "Guardar"
+    },
+    "LanguageSwitcher": {
+        "switchLanguage": "Cambiar idioma",
+        "english": "Inglés",
+        "spanish": "Español"
+    },
+    "Login": {
+        "title": "Iniciar sesión",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "signIn": "Iniciar sesión",
+        "signingIn": "Iniciando sesión...",
+        "or": "O",
+        "createAccount": "crear una nueva cuenta",
+        "fillFields": "Por favor complete todos los campos",
+        "invalidCredentials": "Correo o contraseña inválidos",
+        "failedSignIn": "Error al iniciar sesión"
+    },
+    "Register": {
+        "title": "Crear tu cuenta",
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar contraseña",
+        "register": "Crear cuenta",
+        "registering": "Creando cuenta...",
+        "or": "O",
+        "signIn": "iniciar sesión con cuenta existente",
+        "passwordsDoNotMatch": "Las contraseñas no coinciden",
+        "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+        "failedRegistration": "Error al crear la cuenta"
+    },
+    "Dashboard": {
+        "title": "Lista de Tareas",
+        "welcome": "Bienvenido",
+        "logout": "Cerrar sesión"
+    },
+    "Common": {
+        "language": "Idioma",
+        "english": "Inglés",
+        "spanish": "Español"
+    }
+}

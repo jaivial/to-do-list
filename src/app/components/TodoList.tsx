@@ -5,13 +5,16 @@ import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import TodoItem from "./Todo";
 import { useTodoContext } from "../context/TodoContext";
 import { FiPlus } from "react-icons/fi";
+import { useTranslations } from "next-intl";
 
-const TodoList: React.FC = () => {
+// Create a wrapper component that safely uses translations
+const TodoListContent = () => {
   const { todos, dispatch, loading, error } = useTodoContext();
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useTranslations("TodoList");
 
   const handleDragEnd = async (result: DropResult) => {
     const { destination, source } = result;
@@ -107,10 +110,10 @@ const TodoList: React.FC = () => {
         {isAddingTodo ? (
           <form onSubmit={handleAddTodo} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
             <div className="mb-3">
-              <input type="text" value={newTodoTitle} onChange={(e) => setNewTodoTitle(e.target.value)} placeholder="Task title" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+              <input type="text" value={newTodoTitle} onChange={(e) => setNewTodoTitle(e.target.value)} placeholder={t("taskTitle")} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required />
             </div>
             <div className="mb-3">
-              <textarea value={newTodoDescription} onChange={(e) => setNewTodoDescription(e.target.value)} placeholder="Task description (optional)" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows={2} />
+              <textarea value={newTodoDescription} onChange={(e) => setNewTodoDescription(e.target.value)} placeholder={t("taskDescription")} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows={2} />
             </div>
             <div className="flex justify-end space-x-2">
               <button
@@ -123,7 +126,7 @@ const TodoList: React.FC = () => {
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
                 disabled={isSubmitting}
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center" disabled={isSubmitting || !newTodoTitle.trim()}>
                 {isSubmitting ? (
@@ -132,10 +135,10 @@ const TodoList: React.FC = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Adding...
+                    {t("adding")}
                   </>
                 ) : (
-                  <>Add Task</>
+                  <>{t("addTask")}</>
                 )}
               </button>
             </div>
@@ -143,7 +146,7 @@ const TodoList: React.FC = () => {
         ) : (
           <button onClick={() => setIsAddingTodo(true)} className="w-full flex items-center justify-center px-4 py-3 bg-white border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition-colors">
             <FiPlus className="mr-2" />
-            Add New Task
+            {t("addNewTask")}
           </button>
         )}
       </div>
@@ -154,7 +157,7 @@ const TodoList: React.FC = () => {
             <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3">
               {todos.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">No tasks yet. Add one to get started!</p>
+                  <p className="text-gray-500">{t("noTasks")}</p>
                 </div>
               ) : (
                 todos.map((todo, index) => <TodoItem key={todo.id} todo={todo} index={index} />)
@@ -166,6 +169,23 @@ const TodoList: React.FC = () => {
       </DragDropContext>
     </div>
   );
+};
+
+// Main component that handles potential errors with translations
+const TodoList: React.FC = () => {
+  try {
+    return <TodoListContent />;
+  } catch (error) {
+    console.error("Error rendering TodoList with translations:", error);
+    // Fallback UI when translations are not available
+    return (
+      <div className="w-full max-w-3xl mx-auto">
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg p-4 mb-4">
+          <p>Loading task list...</p>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default TodoList;

@@ -1,0 +1,56 @@
+{
+    "TodoList": {
+        "addNewTask": "Add New Task",
+        "taskTitle": "Task title",
+        "taskDescription": "Task description (optional)",
+        "cancel": "Cancel",
+        "addTask": "Add Task",
+        "adding": "Adding...",
+        "noTasks": "No tasks yet. Add one to get started!"
+    },
+    "Todo": {
+        "cancel": "Cancel",
+        "save": "Save"
+    },
+    "LanguageSwitcher": {
+        "switchLanguage": "Switch language",
+        "english": "English",
+        "spanish": "Spanish"
+    },
+    "Login": {
+        "title": "Sign in to your account",
+        "or": "Or",
+        "createAccount": "create a new account",
+        "email": "Email address",
+        "password": "Password",
+        "signIn": "Sign in",
+        "signingIn": "Signing in...",
+        "fillFields": "Please fill in all fields",
+        "invalidCredentials": "Invalid email or password",
+        "failedSignIn": "Failed to sign in"
+    },
+    "Register": {
+        "title": "Create your account",
+        "name": "Full name",
+        "email": "Email address",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "register": "Create account",
+        "registering": "Creating account...",
+        "or": "Or",
+        "signIn": "sign in to existing account",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "passwordTooShort": "Password must be at least 6 characters",
+        "failedRegistration": "Failed to create account"
+    },
+    "Dashboard": {
+        "title": "Todo List",
+        "welcome": "Welcome",
+        "logout": "Logout"
+    },
+    "Common": {
+        "language": "Language",
+        "english": "English",
+        "spanish": "Spanish"
+    }
+}
