@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import LanguageSwitcherWithFlags from "../LanguageSwitcherWithFlags";
 import { usePathname } from "next/navigation";
+import MobileMenu from "./MobileMenu";
 
 interface NavbarProps {
   title?: string;
@@ -15,6 +16,7 @@ export default function Navbar({ title }: NavbarProps) {
   const { t } = useLanguage();
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Determinar el título basado en la ruta actual si no se proporciona uno
   const getDefaultTitle = () => {
@@ -34,6 +36,11 @@ export default function Navbar({ title }: NavbarProps) {
 
   const handleLogout = async () => {
     await logout();
+    setIsMenuOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
@@ -50,7 +57,9 @@ export default function Navbar({ title }: NavbarProps) {
               </Link>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+
+          {/* Desktop menu */}
+          <div className="hidden md:flex items-center space-x-4">
             {user && (
               <button onClick={handleLogout} className="px-3 py-1.5 rounded text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 {t("Dashboard.logout")}
@@ -58,8 +67,26 @@ export default function Navbar({ title }: NavbarProps) {
             )}
             <LanguageSwitcherWithFlags />
           </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button onClick={toggleMenu} className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-expanded={isMenuOpen}>
+              <span className="sr-only">{isMenuOpen ? t("Navbar.closeMenu") : t("Navbar.openMenu")}</span>
+              {/* Icon when menu is closed */}
+              <svg className={`${isMenuOpen ? "hidden" : "block"} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              {/* Icon when menu is open */}
+              <svg className={`${isMenuOpen ? "block" : "hidden"} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile menu, show/hide based on menu state */}
+      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} user={user} onLogout={handleLogout} />
     </nav>
   );
 }

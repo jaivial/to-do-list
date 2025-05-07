@@ -12,7 +12,8 @@
         "completedTasks": "Completed Tasks",
         "noCompletedTasks": "No completed tasks yet.",
         "showingTasksFor": "Showing tasks for",
-        "authenticationRequired": "You need to be logged in to add tasks"
+        "authenticationRequired": "You need to be logged in to add tasks",
+        "dragDropInfo": "Drag and drop tasks between sections to mark them as completed or pending."
     },
     "Calendar": {
         "showAllTasks": "Show all tasks",
@@ -59,6 +60,10 @@
         "title": "Todo List",
         "welcome": "Welcome",
         "logout": "Logout"
+    },
+    "Navbar": {
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu"
     },
     "Common": {
         "language": "Language",

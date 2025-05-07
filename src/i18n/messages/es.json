@@ -12,7 +12,8 @@
         "completedTasks": "Tareas Completadas",
         "noCompletedTasks": "No hay tareas completadas aún.",
         "showingTasksFor": "Mostrando tareas para",
-        "authenticationRequired": "Necesitas iniciar sesión para añadir tareas"
+        "authenticationRequired": "Necesitas iniciar sesión para añadir tareas",
+        "dragDropInfo": "Arrastra y suelta tareas entre secciones para marcarlas como completadas o pendientes."
     },
     "Calendar": {
         "showAllTasks": "Mostrar todas las tareas",
@@ -59,6 +60,10 @@
         "title": "Lista de Tareas",
         "welcome": "Bienvenido",
         "logout": "Cerrar sesión"
+    },
+    "Navbar": {
+        "openMenu": "Abrir menú",
+        "closeMenu": "Cerrar menú"
     },
     "Common": {
         "language": "Idioma",

@@ -37,8 +37,8 @@ export default function LanguageSwitcherWithFlags() {
   }
 
   return (
-    <div className="flex items-center">
-      <span className="mr-2 text-sm text-gray-600">{t("LanguageSwitcher.switchLanguage")}:</span>
+    <div className="flex flex-col md:flex-row items-start md:items-center">
+      <span className="text-sm text-gray-600 mb-2 md:mb-0 md:mr-2">{t("LanguageSwitcher.switchLanguage")}:</span>
       <ReactFlagsSelect
         selected={languageToCountry[language]}
         onSelect={handleSelect}
@@ -53,14 +53,29 @@ export default function LanguageSwitcherWithFlags() {
       />
       <style jsx global>{`
         .language-flags-select {
-          min-width: 120px;
+          min-width: 100px;
           font-size: 0.875rem;
+          width: 100%;
+        }
+        @media (min-width: 768px) {
+          .language-flags-select {
+            width: auto;
+            min-width: 120px;
+          }
         }
         .language-flags-select .flag-select__btn {
           border: 1px solid #e2e8f0;
           border-radius: 0.25rem;
           padding: 0.25rem 0.5rem;
           background-color: white;
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+        }
+        @media (min-width: 768px) {
+          .language-flags-select .flag-select__btn {
+            width: auto;
+          }
         }
         .language-flags-select .flag-select__btn:hover {
           border-color: #cbd5e0;
