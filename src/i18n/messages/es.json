@@ -10,7 +10,15 @@
         "pendingTasks": "Tareas Pendientes",
         "noPendingTasks": "No hay tareas pendientes. ¡Buen trabajo!",
         "completedTasks": "Tareas Completadas",
-        "noCompletedTasks": "No hay tareas completadas aún."
+        "noCompletedTasks": "No hay tareas completadas aún.",
+        "showingTasksFor": "Mostrando tareas para",
+        "authenticationRequired": "Necesitas iniciar sesión para añadir tareas"
+    },
+    "Calendar": {
+        "showAllTasks": "Mostrar todas las tareas",
+        "previousMonth": "Mes anterior",
+        "nextMonth": "Mes siguiente",
+        "today": "Hoy"
     },
     "Todo": {
         "cancel": "Cancelar",

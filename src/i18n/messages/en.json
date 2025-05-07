@@ -10,7 +10,15 @@
         "pendingTasks": "Pending Tasks",
         "noPendingTasks": "No pending tasks. Great job!",
         "completedTasks": "Completed Tasks",
-        "noCompletedTasks": "No completed tasks yet."
+        "noCompletedTasks": "No completed tasks yet.",
+        "showingTasksFor": "Showing tasks for",
+        "authenticationRequired": "You need to be logged in to add tasks"
+    },
+    "Calendar": {
+        "showAllTasks": "Show all tasks",
+        "previousMonth": "Previous month",
+        "nextMonth": "Next month",
+        "today": "Today"
     },
     "Todo": {
         "cancel": "Cancel",

@@ -45,8 +45,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(result.error);
       }
 
-      const locale = typeof window !== "undefined" ? window.location.pathname.split("/")[1] : "en";
-      router.push(`/${locale}/dashboard`);
+      // Redirigimos directamente a dashboard sin usar locale
+      router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -81,9 +81,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       setLoading(true);
-      const locale = typeof window !== "undefined" ? window.location.pathname.split("/")[1] : "en";
+
+      // Primero ejecutamos el signOut
       await signOut({ redirect: false });
-      router.push(`/${locale}/auth/login`);
+
+      // Redirigimos directamente a la página de login sin usar locale
+      router.push("/auth/login");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Logout failed");
     } finally {

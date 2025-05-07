@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useLanguage } from "../../context/LanguageContext";
+import { useAuth } from "../../context/AuthContext";
 import LanguageSwitcherWithFlags from "../LanguageSwitcherWithFlags";
 import { usePathname } from "next/navigation";
 
@@ -12,6 +13,7 @@ interface NavbarProps {
 
 export default function Navbar({ title }: NavbarProps) {
   const { t } = useLanguage();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
 
   // Determinar el título basado en la ruta actual si no se proporciona uno
@@ -30,6 +32,10 @@ export default function Navbar({ title }: NavbarProps) {
 
   const displayTitle = title || getDefaultTitle();
 
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
     <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,7 +50,12 @@ export default function Navbar({ title }: NavbarProps) {
               </Link>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
+            {user && (
+              <button onClick={handleLogout} className="px-3 py-1.5 rounded text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                {t("Dashboard.logout")}
+              </button>
+            )}
             <LanguageSwitcherWithFlags />
           </div>
         </div>

@@ -6,10 +6,11 @@ import TodoItem from "./Todo";
 import { useTodoContext } from "../context/TodoContext";
 import { FiPlus, FiCheckCircle, FiClock } from "react-icons/fi";
 import { useLanguage } from "../context/LanguageContext";
+import Calendar from "./Calendar";
 
 // Create a wrapper component that safely uses translations
 const TodoListContent = () => {
-  const { todos, dispatch, loading, error } = useTodoContext();
+  const { todos, filteredTodos, dispatch, loading, error, selectedDate } = useTodoContext();
   const { t } = useLanguage();
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [newTodoDescription, setNewTodoDescription] = useState("");
@@ -17,8 +18,8 @@ const TodoListContent = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filter todos by section
-  const pendingTodos = todos.filter((todo) => todo.section === "pending" || !todo.completed);
-  const completedTodos = todos.filter((todo) => todo.section === "completed" || todo.completed);
+  const pendingTodos = (selectedDate ? filteredTodos : todos).filter((todo) => todo.section === "pending" || !todo.completed);
+  const completedTodos = (selectedDate ? filteredTodos : todos).filter((todo) => todo.section === "completed" || todo.completed);
 
   const handleDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId } = result;
@@ -136,7 +137,7 @@ const TodoListContent = () => {
         description: newTodoDescription,
         completed: false,
         section: "pending",
-        createdAt: new Date(),
+        createdAt: selectedDate || new Date(), // Use selected date if available
         updatedAt: new Date(),
         position: pendingTodos.length,
         userId: "",
@@ -163,7 +164,9 @@ const TodoListContent = () => {
           title: newTodoTitle,
           description: newTodoDescription,
           section: "pending",
+          date: selectedDate ? selectedDate.toISOString() : new Date().toISOString(),
         }),
+        credentials: "include", // Include credentials for authentication
       });
 
       if (response.ok) {
@@ -177,6 +180,13 @@ const TodoListContent = () => {
           type: "ADD_TODO",
           payload: newTodo,
         });
+      } else if (response.status === 401) {
+        // User is not authenticated
+        dispatch({
+          type: "DELETE_TODO",
+          payload: optimisticTodo.id,
+        });
+        alert(t("TodoList.authenticationRequired"));
       } else {
         // If error, refresh todos from server
         const refreshResponse = await fetch("/api/todos");
@@ -226,6 +236,9 @@ const TodoListContent = () => {
 
   return (
     <div className="w-full max-w-3xl mx-auto">
+      {/* Calendar Component */}
+      <Calendar />
+
       <div className="mb-6">
         {isAddingTodo ? (
           <form onSubmit={handleAddTodo} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
@@ -270,6 +283,14 @@ const TodoListContent = () => {
           </button>
         )}
       </div>
+
+      {selectedDate && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+          <p className="text-blue-800">
+            {t("TodoList.showingTasksFor")} {selectedDate.toLocaleDateString()}
+          </p>
+        </div>
+      )}
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

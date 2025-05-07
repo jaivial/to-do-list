@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, useEffect, useState } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useState, useMemo } from "react";
 import { Todo, TodoAction, TodoContextType } from "../lib/types";
+import { useSession } from "next-auth/react";
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
 
@@ -79,6 +80,9 @@ const todoReducer = (state: Todo[], action: TodoAction): Todo[] => {
     }
     case "SET_TODOS":
       return action.payload;
+    case "SET_SELECTED_DATE":
+      // This doesn't affect the todos array, just the selected date
+      return state;
     default:
       return state;
   }
@@ -88,9 +92,19 @@ export const TodoProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [todos, dispatch] = useReducer(todoReducer, []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { status } = useSession();
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchTodos = async () => {
+      // Si no hay una sesión activa o montado, no hacemos nada
+      if (status !== "authenticated" || !isMounted) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         const response = await fetch("/api/todos");
@@ -99,19 +113,68 @@ export const TodoProvider: React.FC<{ children: React.ReactNode }> = ({ children
           throw new Error("Failed to fetch todos");
         }
 
-        const data = await response.json();
-        dispatch({ type: "SET_TODOS", payload: data });
+        // Solo actualizamos el estado si el componente sigue montado
+        if (isMounted) {
+          const data = await response.json();
+          dispatch({ type: "SET_TODOS", payload: data });
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : "An error occurred");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchTodos();
-  }, []);
+    // Si el estado cambia a "unauthenticated", limpiamos los todos
+    if (status === "unauthenticated" && isMounted) {
+      dispatch({ type: "SET_TODOS", payload: [] });
+      setLoading(false);
+    } else {
+      fetchTodos();
+    }
 
-  return <TodoContext.Provider value={{ todos, dispatch, loading, error }}>{children}</TodoContext.Provider>;
+    return () => {
+      isMounted = false;
+    };
+  }, [status]);
+
+  // Handle selected date change
+  const handleSetSelectedDate = (date: Date | null) => {
+    setSelectedDate(date);
+    dispatch({ type: "SET_SELECTED_DATE", payload: date });
+  };
+
+  // Filter todos based on selected date
+  const filteredTodos = useMemo(() => {
+    if (!selectedDate) return todos;
+
+    return todos.filter((todo) => {
+      const todoDate = new Date(todo.createdAt);
+
+      // Normalize dates to compare only year, month, and day
+      return todoDate.getFullYear() === selectedDate.getFullYear() && todoDate.getMonth() === selectedDate.getMonth() && todoDate.getDate() === selectedDate.getDate();
+    });
+  }, [todos, selectedDate]);
+
+  return (
+    <TodoContext.Provider
+      value={{
+        todos,
+        dispatch,
+        loading,
+        error,
+        selectedDate,
+        setSelectedDate: handleSetSelectedDate,
+        filteredTodos,
+      }}
+    >
+      {children}
+    </TodoContext.Provider>
+  );
 };
 
 export const useTodoContext = (): TodoContextType => {

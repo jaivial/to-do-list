@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { title, description = "" } = body;
+    const { title, description = "", date } = body;
 
     if (!title) {
       return NextResponse.json(
@@ -66,12 +66,17 @@ export async function POST(request: Request) {
 
     const position = highestPositionTodo ? highestPositionTodo.position + 1 : 0;
 
+    // Parse date if provided, otherwise use current date
+    const createdAt = date ? new Date(date) : new Date();
+
     const todo = await prisma.todo.create({
       data: {
         title,
         description,
         userId: session.user.id,
         position,
+        createdAt,
+        updatedAt: new Date(),
       },
     });
 
