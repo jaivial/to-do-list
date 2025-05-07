@@ -81,8 +81,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       setLoading(true);
+      const locale = typeof window !== "undefined" ? window.location.pathname.split("/")[1] : "en";
       await signOut({ redirect: false });
-      router.push("/login");
+      router.push(`/${locale}/auth/login`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Logout failed");
     } finally {

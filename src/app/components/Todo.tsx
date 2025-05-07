@@ -5,7 +5,12 @@ import { Todo } from "../lib/types";
 import { useTodoContext } from "../context/TodoContext";
 import { FiTrash2, FiEdit, FiCheck, FiX } from "react-icons/fi";
 import { Draggable } from "@hello-pangea/dnd";
-import { useTranslations } from "next-intl";
+
+// Dictionary of fallback translations
+const TRANSLATIONS: Record<string, string> = {
+  cancel: "Cancel",
+  save: "Save",
+};
 
 interface TodoItemProps {
   todo: Todo;
@@ -18,7 +23,11 @@ const TodoItemContent: React.FC<TodoItemProps> = ({ todo, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description || "");
-  const t = useTranslations("Todo");
+
+  // Simple translation function that provides stable fallbacks
+  const t = (key: string): string => {
+    return TRANSLATIONS[key] || key;
+  };
 
   const handleComplete = async () => {
     try {

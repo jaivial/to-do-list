@@ -21,9 +21,9 @@ export default function Dashboard() {
   useEffect(() => {
     setIsClient(true);
     if (!loading && !user) {
-      router.push("/auth/login");
+      router.push(`/${locale}/auth/login`);
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, locale]);
 
   if (loading || !isClient) {
     return (

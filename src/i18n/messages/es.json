@@ -51,6 +51,9 @@
     "Common": {
         "language": "Idioma",
         "english": "Inglés",
-        "spanish": "Español"
+        "spanish": "Español",
+        "pageNotFound": "Página No Encontrada",
+        "pageNotFoundMessage": "La página que estás buscando no existe o ha sido movida.",
+        "backToHome": "Volver al Inicio"
     }
 }

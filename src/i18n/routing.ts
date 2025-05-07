@@ -10,6 +10,7 @@ export const routing = defineRouting({
     '/': '/',
     '/dashboard': '/dashboard',
     '/auth/login': '/auth/login',
-    '/auth/register': '/auth/register'
+    '/auth/register': '/auth/register',
+    '/not-found': '/not-found'
   }
 }); 

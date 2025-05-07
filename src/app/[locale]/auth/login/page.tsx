@@ -37,16 +37,25 @@ export default function Login() {
       setError("");
       setLoading(true);
 
+      console.log("Intentando iniciar sesión con:", { email, password });
+
       const result = await signIn("credentials", {
         redirect: false,
         email,
         password,
       });
 
+      console.log("Resultado de signIn:", result);
+
       if (result?.error) {
+        console.error("Error de autenticación:", result.error);
         setError(t("invalidCredentials"));
       } else {
-        router.push(`/${locale}/dashboard`);
+        console.log("Redirigiendo a:", `/${locale}/dashboard`);
+        // Usar una pequeña demora para asegurar que la sesión se actualice
+        setTimeout(() => {
+          router.push(`/${locale}/dashboard`);
+        }, 500);
       }
     } catch (err) {
       console.error("Login error:", err);

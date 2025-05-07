@@ -45,6 +45,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 días
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -59,11 +60,24 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Si la URL ya empieza con la URL base, la retornamos directamente
+      if (url.startsWith(baseUrl)) return url;
+      
+      // Si la URL es relativa (empieza con /)
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
+      }
+      
+      return baseUrl;
+    },
   },
   pages: {
     signIn: "/auth/login",
     newUser: "/auth/register",
+    error: "/auth/error",
   },
+  debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET,
 };
 

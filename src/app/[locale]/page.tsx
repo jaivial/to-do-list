@@ -14,10 +14,10 @@ export default function Home() {
       if (user) {
         router.push(`/${locale}/dashboard`);
       } else {
-        router.push("/auth/login");
+        router.push(`/${locale}/auth/login`);
       }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, locale]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

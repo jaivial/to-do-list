@@ -5,7 +5,17 @@ import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import TodoItem from "./Todo";
 import { useTodoContext } from "../context/TodoContext";
 import { FiPlus } from "react-icons/fi";
-import { useTranslations } from "next-intl";
+
+// Dictionary of fallback translations
+const TRANSLATIONS: Record<string, string> = {
+  taskTitle: "Task title",
+  taskDescription: "Description (optional)",
+  cancel: "Cancel",
+  adding: "Adding...",
+  addTask: "Add Task",
+  addNewTask: "Add New Task",
+  noTasks: "No tasks yet. Add one to get started!",
+};
 
 // Create a wrapper component that safely uses translations
 const TodoListContent = () => {
@@ -14,7 +24,11 @@ const TodoListContent = () => {
   const [newTodoDescription, setNewTodoDescription] = useState("");
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const t = useTranslations("TodoList");
+
+  // Simple translation function that provides stable fallbacks
+  const t = (key: string): string => {
+    return TRANSLATIONS[key] || key;
+  };
 
   const handleDragEnd = async (result: DropResult) => {
     const { destination, source } = result;

@@ -51,6 +51,9 @@
     "Common": {
         "language": "Language",
         "english": "English",
-        "spanish": "Spanish"
+        "spanish": "Spanish",
+        "pageNotFound": "Page Not Found",
+        "pageNotFoundMessage": "The page you are looking for doesn't exist or has been moved.",
+        "backToHome": "Back to Home"
     }
 }
