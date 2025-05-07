@@ -134,6 +134,7 @@ exports.Prisma.TodoScalarFieldEnum = {
   title: 'title',
   description: 'description',
   completed: 'completed',
+  section: 'section',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   position: 'position',

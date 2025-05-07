@@ -6,7 +6,11 @@
         "cancel": "Cancelar",
         "addTask": "Añadir Tarea",
         "adding": "Añadiendo...",
-        "noTasks": "No hay tareas aún. ¡Añade una para comenzar!"
+        "noTasks": "No hay tareas aún. ¡Añade una para comenzar!",
+        "pendingTasks": "Tareas Pendientes",
+        "noPendingTasks": "No hay tareas pendientes. ¡Buen trabajo!",
+        "completedTasks": "Tareas Completadas",
+        "noCompletedTasks": "No hay tareas completadas aún."
     },
     "Todo": {
         "cancel": "Cancelar",

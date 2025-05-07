@@ -6,7 +6,11 @@
         "cancel": "Cancel",
         "addTask": "Add Task",
         "adding": "Adding...",
-        "noTasks": "No tasks yet. Add one to get started!"
+        "noTasks": "No tasks yet. Add one to get started!",
+        "pendingTasks": "Pending Tasks",
+        "noPendingTasks": "No pending tasks. Great job!",
+        "completedTasks": "Completed Tasks",
+        "noCompletedTasks": "No completed tasks yet."
     },
     "Todo": {
         "cancel": "Cancel",

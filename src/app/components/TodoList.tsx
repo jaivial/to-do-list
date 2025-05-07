@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import TodoItem from "./Todo";
 import { useTodoContext } from "../context/TodoContext";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiCheckCircle, FiClock } from "react-icons/fi";
 import { useLanguage } from "../context/LanguageContext";
 
 // Create a wrapper component that safely uses translations
@@ -16,39 +16,108 @@ const TodoListContent = () => {
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Filter todos by section
+  const pendingTodos = todos.filter((todo) => todo.section === "pending" || !todo.completed);
+  const completedTodos = todos.filter((todo) => todo.section === "completed" || todo.completed);
+
   const handleDragEnd = async (result: DropResult) => {
-    const { destination, source } = result;
+    const { destination, source, draggableId } = result;
 
     // If dropped outside the list or didn't move
-    if (!destination || destination.index === source.index) {
+    if (!destination) {
       return;
     }
 
-    // Reorder the todos locally first for immediate UI update
-    dispatch({
-      type: "REORDER_TODO",
-      payload: {
-        sourceIndex: source.index,
-        destinationIndex: destination.index,
-      },
-    });
+    const sourceDroppableId = source.droppableId;
+    const destinationDroppableId = destination.droppableId;
+
+    // Moving within the same section
+    if (sourceDroppableId === destinationDroppableId && source.index === destination.index) {
+      return;
+    }
+
+    const draggedTodo = todos.find((todo) => todo.id === draggableId);
+    if (!draggedTodo) return;
+
+    // Optimistic update for UI
+    if (sourceDroppableId === destinationDroppableId) {
+      // Reordering within the same section
+      const sectionTodos = sourceDroppableId === "pending" ? pendingTodos : completedTodos;
+      const updatedPositions = Array.from(sectionTodos);
+      const [removed] = updatedPositions.splice(source.index, 1);
+      updatedPositions.splice(destination.index, 0, removed);
+
+      // Update local state for immediate UI response
+      dispatch({
+        type: "REORDER_TODO",
+        payload: {
+          sourceIndex: source.index,
+          destinationIndex: destination.index,
+        },
+      });
+    } else {
+      // Moving between sections
+      const newSection = destinationDroppableId;
+
+      // Update local state for immediate UI response
+      dispatch({
+        type: "MOVE_TODO_SECTION",
+        payload: {
+          id: draggableId,
+          section: newSection,
+        },
+      });
+    }
 
     // Then update on the server
     try {
-      await fetch("/api/todos/reorder", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          todos: todos.map((todo, index) => ({
-            id: todo.id,
-            position: index,
-          })),
-        }),
-      });
+      // If moving between sections, update the todo's section and completed status
+      if (sourceDroppableId !== destinationDroppableId) {
+        await fetch(`/api/todos/${draggableId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            section: destinationDroppableId,
+            completed: destinationDroppableId === "completed",
+          }),
+        });
+      } else {
+        // If just reordering, update positions
+        const sectionTodos = sourceDroppableId === "pending" ? pendingTodos : completedTodos;
+        const updatedPositions = Array.from(sectionTodos);
+        const [removed] = updatedPositions.splice(source.index, 1);
+        updatedPositions.splice(destination.index, 0, removed);
+
+        await fetch("/api/todos/reorder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            todos: updatedPositions.map((todo, index) => ({
+              id: todo.id,
+              position: index,
+            })),
+          }),
+        });
+      }
     } catch (error) {
-      console.error("Error reordering todos:", error);
+      console.error("Error updating todos:", error);
+      // If error, refresh todos from server
+      try {
+        const response = await fetch("/api/todos");
+        if (response.ok) {
+          const refreshedTodos = await response.json();
+          dispatch({
+            type: "SET_TODOS",
+            payload: refreshedTodos,
+          });
+        }
+      } catch (refreshError) {
+        console.error("Error refreshing todos:", refreshError);
+      }
     }
   };
 
@@ -60,6 +129,31 @@ const TodoListContent = () => {
     try {
       setIsSubmitting(true);
 
+      // Create new todo object for optimistic update
+      const optimisticTodo = {
+        id: `temp-${Date.now()}`,
+        title: newTodoTitle,
+        description: newTodoDescription,
+        completed: false,
+        section: "pending",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        position: pendingTodos.length,
+        userId: "",
+      };
+
+      // Optimistic update
+      dispatch({
+        type: "ADD_TODO",
+        payload: optimisticTodo,
+      });
+
+      // Reset form
+      setNewTodoTitle("");
+      setNewTodoDescription("");
+      setIsAddingTodo(false);
+
+      // Send to server
       const response = await fetch("/api/todos", {
         method: "POST",
         headers: {
@@ -68,21 +162,47 @@ const TodoListContent = () => {
         body: JSON.stringify({
           title: newTodoTitle,
           description: newTodoDescription,
+          section: "pending",
         }),
       });
 
       if (response.ok) {
         const newTodo = await response.json();
+        // Replace optimistic todo with real one
+        dispatch({
+          type: "DELETE_TODO",
+          payload: optimisticTodo.id,
+        });
         dispatch({
           type: "ADD_TODO",
           payload: newTodo,
         });
-        setNewTodoTitle("");
-        setNewTodoDescription("");
-        setIsAddingTodo(false);
+      } else {
+        // If error, refresh todos from server
+        const refreshResponse = await fetch("/api/todos");
+        if (refreshResponse.ok) {
+          const refreshedTodos = await refreshResponse.json();
+          dispatch({
+            type: "SET_TODOS",
+            payload: refreshedTodos,
+          });
+        }
       }
     } catch (error) {
       console.error("Error adding todo:", error);
+      // If error, refresh todos from server
+      try {
+        const response = await fetch("/api/todos");
+        if (response.ok) {
+          const refreshedTodos = await response.json();
+          dispatch({
+            type: "SET_TODOS",
+            payload: refreshedTodos,
+          });
+        }
+      } catch (refreshError) {
+        console.error("Error refreshing todos:", refreshError);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -152,20 +272,51 @@ const TodoListContent = () => {
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="todos">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3">
-              {todos.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500">{t("TodoList.noTasks")}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Pending Tasks Section */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <h2 className="flex items-center text-lg font-medium text-gray-800 mb-4">
+              <FiClock className="mr-2 text-blue-500" />
+              {t("TodoList.pendingTasks")} ({pendingTodos.length})
+            </h2>
+            <Droppable droppableId="pending">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3 min-h-[200px]">
+                  {pendingTodos.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">{t("TodoList.noPendingTasks")}</p>
+                    </div>
+                  ) : (
+                    pendingTodos.map((todo, index) => <TodoItem key={todo.id} todo={todo} index={index} />)
+                  )}
+                  {provided.placeholder}
                 </div>
-              ) : (
-                todos.map((todo, index) => <TodoItem key={todo.id} todo={todo} index={index} />)
               )}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+            </Droppable>
+          </div>
+
+          {/* Completed Tasks Section */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <h2 className="flex items-center text-lg font-medium text-gray-800 mb-4">
+              <FiCheckCircle className="mr-2 text-green-500" />
+              {t("TodoList.completedTasks")} ({completedTodos.length})
+            </h2>
+            <Droppable droppableId="completed">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3 min-h-[200px]">
+                  {completedTodos.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">{t("TodoList.noCompletedTasks")}</p>
+                    </div>
+                  ) : (
+                    completedTodos.map((todo, index) => <TodoItem key={todo.id} todo={todo} index={index} />)
+                  )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
+        </div>
       </DragDropContext>
     </div>
   );

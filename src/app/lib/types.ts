@@ -9,6 +9,7 @@ export interface Todo {
   title: string;
   description?: string;
   completed: boolean;
+  section: string;
   createdAt: Date;
   updatedAt: Date;
   position: number;
@@ -20,7 +21,8 @@ export type TodoAction =
   | { type: 'UPDATE_TODO'; payload: Todo }
   | { type: 'DELETE_TODO'; payload: string }
   | { type: 'COMPLETE_TODO'; payload: string }
-  | { type: 'REORDER_TODO'; payload: { sourceIndex: number; destinationIndex: number } }
+  | { type: 'MOVE_TODO_SECTION'; payload: { id: string; section: string } }
+  | { type: 'REORDER_TODO'; payload: { sourceIndex: number; destinationIndex: number; sourceSection?: string; destinationSection?: string } }
   | { type: 'SET_TODOS'; payload: Todo[] };
 
 export interface TodoContextType {

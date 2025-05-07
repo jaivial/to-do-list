@@ -2098,6 +2098,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     completed: boolean | null
+    section: string | null
     createdAt: Date | null
     updatedAt: Date | null
     position: number | null
@@ -2109,6 +2110,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     completed: boolean | null
+    section: string | null
     createdAt: Date | null
     updatedAt: Date | null
     position: number | null
@@ -2120,6 +2122,7 @@ export namespace Prisma {
     title: number
     description: number
     completed: number
+    section: number
     createdAt: number
     updatedAt: number
     position: number
@@ -2141,6 +2144,7 @@ export namespace Prisma {
     title?: true
     description?: true
     completed?: true
+    section?: true
     createdAt?: true
     updatedAt?: true
     position?: true
@@ -2152,6 +2156,7 @@ export namespace Prisma {
     title?: true
     description?: true
     completed?: true
+    section?: true
     createdAt?: true
     updatedAt?: true
     position?: true
@@ -2163,6 +2168,7 @@ export namespace Prisma {
     title?: true
     description?: true
     completed?: true
+    section?: true
     createdAt?: true
     updatedAt?: true
     position?: true
@@ -2261,6 +2267,7 @@ export namespace Prisma {
     title: string
     description: string | null
     completed: boolean
+    section: string
     createdAt: Date
     updatedAt: Date
     position: number
@@ -2291,6 +2298,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     completed?: boolean
+    section?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     position?: boolean
@@ -2303,6 +2311,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     completed?: boolean
+    section?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     position?: boolean
@@ -2315,6 +2324,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     completed?: boolean
+    section?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     position?: boolean
@@ -2327,13 +2337,14 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     completed?: boolean
+    section?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     position?: boolean
     userId?: boolean
   }
 
-  export type TodoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "completed" | "createdAt" | "updatedAt" | "position" | "userId", ExtArgs["result"]["todo"]>
+  export type TodoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "completed" | "section" | "createdAt" | "updatedAt" | "position" | "userId", ExtArgs["result"]["todo"]>
   export type TodoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2354,6 +2365,7 @@ export namespace Prisma {
       title: string
       description: string | null
       completed: boolean
+      section: string
       createdAt: Date
       updatedAt: Date
       position: number
@@ -2786,6 +2798,7 @@ export namespace Prisma {
     readonly title: FieldRef<"Todo", 'String'>
     readonly description: FieldRef<"Todo", 'String'>
     readonly completed: FieldRef<"Todo", 'Boolean'>
+    readonly section: FieldRef<"Todo", 'String'>
     readonly createdAt: FieldRef<"Todo", 'DateTime'>
     readonly updatedAt: FieldRef<"Todo", 'DateTime'>
     readonly position: FieldRef<"Todo", 'Int'>
@@ -3235,6 +3248,7 @@ export namespace Prisma {
     title: 'title',
     description: 'description',
     completed: 'completed',
+    section: 'section',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     position: 'position',
@@ -3407,6 +3421,7 @@ export namespace Prisma {
     title?: StringFilter<"Todo"> | string
     description?: StringNullableFilter<"Todo"> | string | null
     completed?: BoolFilter<"Todo"> | boolean
+    section?: StringFilter<"Todo"> | string
     createdAt?: DateTimeFilter<"Todo"> | Date | string
     updatedAt?: DateTimeFilter<"Todo"> | Date | string
     position?: IntFilter<"Todo"> | number
@@ -3419,6 +3434,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     completed?: SortOrder
+    section?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     position?: SortOrder
@@ -3434,6 +3450,7 @@ export namespace Prisma {
     title?: StringFilter<"Todo"> | string
     description?: StringNullableFilter<"Todo"> | string | null
     completed?: BoolFilter<"Todo"> | boolean
+    section?: StringFilter<"Todo"> | string
     createdAt?: DateTimeFilter<"Todo"> | Date | string
     updatedAt?: DateTimeFilter<"Todo"> | Date | string
     position?: IntFilter<"Todo"> | number
@@ -3446,6 +3463,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     completed?: SortOrder
+    section?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     position?: SortOrder
@@ -3465,6 +3483,7 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Todo"> | string
     description?: StringNullableWithAggregatesFilter<"Todo"> | string | null
     completed?: BoolWithAggregatesFilter<"Todo"> | boolean
+    section?: StringWithAggregatesFilter<"Todo"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Todo"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Todo"> | Date | string
     position?: IntWithAggregatesFilter<"Todo"> | number
@@ -3543,6 +3562,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     completed?: boolean
+    section?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     position?: number
@@ -3554,6 +3574,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     completed?: boolean
+    section?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     position?: number
@@ -3565,6 +3586,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     completed?: BoolFieldUpdateOperationsInput | boolean
+    section?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     position?: IntFieldUpdateOperationsInput | number
@@ -3576,6 +3598,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     completed?: BoolFieldUpdateOperationsInput | boolean
+    section?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     position?: IntFieldUpdateOperationsInput | number
@@ -3587,6 +3610,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     completed?: boolean
+    section?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     position?: number
@@ -3598,6 +3622,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     completed?: BoolFieldUpdateOperationsInput | boolean
+    section?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     position?: IntFieldUpdateOperationsInput | number
@@ -3608,6 +3633,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     completed?: BoolFieldUpdateOperationsInput | boolean
+    section?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     position?: IntFieldUpdateOperationsInput | number
@@ -3755,6 +3781,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     completed?: SortOrder
+    section?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     position?: SortOrder
@@ -3770,6 +3797,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     completed?: SortOrder
+    section?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     position?: SortOrder
@@ -3781,6 +3809,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     completed?: SortOrder
+    section?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     position?: SortOrder
@@ -4067,6 +4096,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     completed?: boolean
+    section?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     position?: number
@@ -4077,6 +4107,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     completed?: boolean
+    section?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     position?: number
@@ -4116,6 +4147,7 @@ export namespace Prisma {
     title?: StringFilter<"Todo"> | string
     description?: StringNullableFilter<"Todo"> | string | null
     completed?: BoolFilter<"Todo"> | boolean
+    section?: StringFilter<"Todo"> | string
     createdAt?: DateTimeFilter<"Todo"> | Date | string
     updatedAt?: DateTimeFilter<"Todo"> | Date | string
     position?: IntFilter<"Todo"> | number
@@ -4179,6 +4211,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     completed?: boolean
+    section?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     position?: number
@@ -4189,6 +4222,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     completed?: BoolFieldUpdateOperationsInput | boolean
+    section?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     position?: IntFieldUpdateOperationsInput | number
@@ -4199,6 +4233,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     completed?: BoolFieldUpdateOperationsInput | boolean
+    section?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     position?: IntFieldUpdateOperationsInput | number
@@ -4209,6 +4244,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     completed?: BoolFieldUpdateOperationsInput | boolean
+    section?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     position?: IntFieldUpdateOperationsInput | number

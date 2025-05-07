@@ -21,7 +21,14 @@ const TodoItemContent: React.FC<TodoItemProps> = ({ todo, index }) => {
   const [description, setDescription] = useState(todo.description || "");
 
   const handleComplete = async () => {
+    // Optimistic update - update UI immediately
+    dispatch({
+      type: "COMPLETE_TODO",
+      payload: todo.id,
+    });
+
     try {
+      // Then send request to server
       const response = await fetch(`/api/todos/${todo.id}`, {
         method: "PATCH",
         headers: {
@@ -29,34 +36,66 @@ const TodoItemContent: React.FC<TodoItemProps> = ({ todo, index }) => {
         },
         body: JSON.stringify({
           completed: !todo.completed,
+          section: todo.completed ? "pending" : "completed",
         }),
       });
 
-      if (response.ok) {
-        const updatedTodo = await response.json();
+      if (!response.ok) {
+        // If server request fails, revert the optimistic update
         dispatch({
-          type: "UPDATE_TODO",
-          payload: updatedTodo,
+          type: "COMPLETE_TODO",
+          payload: todo.id,
         });
+        console.error("Failed to update todo status");
       }
     } catch (error) {
+      // If there's an error, revert the optimistic update
+      dispatch({
+        type: "COMPLETE_TODO",
+        payload: todo.id,
+      });
       console.error("Error updating todo:", error);
     }
   };
 
   const handleDelete = async () => {
+    // Optimistic update - remove from UI immediately
+    dispatch({
+      type: "DELETE_TODO",
+      payload: todo.id,
+    });
+
     try {
       const response = await fetch(`/api/todos/${todo.id}`, {
         method: "DELETE",
       });
 
-      if (response.ok) {
-        dispatch({
-          type: "DELETE_TODO",
-          payload: todo.id,
-        });
+      if (!response.ok) {
+        // If server request fails, fetch all todos again to restore state
+        const refreshResponse = await fetch("/api/todos");
+        if (refreshResponse.ok) {
+          const todos = await refreshResponse.json();
+          dispatch({
+            type: "SET_TODOS",
+            payload: todos,
+          });
+        }
+        console.error("Failed to delete todo");
       }
     } catch (error) {
+      // If there's an error, fetch all todos again to restore state
+      try {
+        const refreshResponse = await fetch("/api/todos");
+        if (refreshResponse.ok) {
+          const todos = await refreshResponse.json();
+          dispatch({
+            type: "SET_TODOS",
+            payload: todos,
+          });
+        }
+      } catch (e) {
+        console.error("Error refreshing todos:", e);
+      }
       console.error("Error deleting todo:", error);
     }
   };
@@ -66,6 +105,20 @@ const TodoItemContent: React.FC<TodoItemProps> = ({ todo, index }) => {
   };
 
   const handleSave = async () => {
+    // Create updated todo for optimistic update
+    const updatedTodo = {
+      ...todo,
+      title,
+      description,
+    };
+
+    // Optimistic update
+    dispatch({
+      type: "UPDATE_TODO",
+      payload: updatedTodo,
+    });
+    setIsEditing(false);
+
     try {
       const response = await fetch(`/api/todos/${todo.id}`, {
         method: "PATCH",
@@ -78,15 +131,26 @@ const TodoItemContent: React.FC<TodoItemProps> = ({ todo, index }) => {
         }),
       });
 
-      if (response.ok) {
-        const updatedTodo = await response.json();
+      if (!response.ok) {
+        // If server request fails, revert to original values and re-enter edit mode
+        setTitle(todo.title);
+        setDescription(todo.description || "");
         dispatch({
           type: "UPDATE_TODO",
-          payload: updatedTodo,
+          payload: todo,
         });
-        setIsEditing(false);
+        setIsEditing(true);
+        console.error("Failed to update todo");
       }
     } catch (error) {
+      // If there's an error, revert to original values and re-enter edit mode
+      setTitle(todo.title);
+      setDescription(todo.description || "");
+      dispatch({
+        type: "UPDATE_TODO",
+        payload: todo,
+      });
+      setIsEditing(true);
       console.error("Error updating todo:", error);
     }
   };

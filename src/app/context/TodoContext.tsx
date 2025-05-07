@@ -14,18 +14,68 @@ const todoReducer = (state: Todo[], action: TodoAction): Todo[] => {
     case "DELETE_TODO":
       return state.filter((todo) => todo.id !== action.payload);
     case "COMPLETE_TODO":
-      return state.map((todo) => (todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo));
+      return state.map((todo) =>
+        todo.id === action.payload
+          ? {
+              ...todo,
+              completed: !todo.completed,
+              section: todo.completed ? "pending" : "completed",
+            }
+          : todo
+      );
+    case "MOVE_TODO_SECTION":
+      return state.map((todo) =>
+        todo.id === action.payload.id
+          ? {
+              ...todo,
+              section: action.payload.section,
+              completed: action.payload.section === "completed",
+            }
+          : todo
+      );
     case "REORDER_TODO": {
-      const { sourceIndex, destinationIndex } = action.payload;
-      const result = Array.from(state);
-      const [removed] = result.splice(sourceIndex, 1);
-      result.splice(destinationIndex, 0, removed);
+      const { sourceIndex, destinationIndex, sourceSection, destinationSection } = action.payload;
 
-      // Update positions
-      return result.map((todo, index) => ({
-        ...todo,
-        position: index,
-      }));
+      // If moving between sections
+      if (sourceSection && destinationSection && sourceSection !== destinationSection) {
+        const result = Array.from(state);
+        const sourceItem = result.find((todo, idx) => todo.section === sourceSection && idx === sourceIndex);
+
+        if (!sourceItem) return state;
+
+        // Remove the item from its original position
+        const newState = state.filter((todo) => todo.id !== sourceItem.id);
+
+        // Update the item with new section and completed status
+        const updatedItem = {
+          ...sourceItem,
+          section: destinationSection,
+          completed: destinationSection === "completed",
+        };
+
+        // Insert at the new position
+        const destinationSectionItems = newState.filter((todo) => todo.section === destinationSection);
+        const beforeDestination = newState.filter((todo) => todo.section !== destinationSection && (todo.section < destinationSection || (todo.section === destinationSection && todo.position < destinationIndex)));
+        const afterDestination = newState.filter((todo) => todo.section !== destinationSection && (todo.section > destinationSection || (todo.section === destinationSection && todo.position >= destinationIndex)));
+
+        // Combine all items
+        return [...beforeDestination, ...destinationSectionItems.slice(0, destinationIndex), updatedItem, ...destinationSectionItems.slice(destinationIndex), ...afterDestination].map((todo, index) => ({
+          ...todo,
+          position: index,
+        }));
+      }
+      // Regular reordering within the same section
+      else {
+        const result = Array.from(state);
+        const [removed] = result.splice(sourceIndex, 1);
+        result.splice(destinationIndex, 0, removed);
+
+        // Update positions
+        return result.map((todo, index) => ({
+          ...todo,
+          position: index,
+        }));
+      }
     }
     case "SET_TODOS":
       return action.payload;
